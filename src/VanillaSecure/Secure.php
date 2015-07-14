@@ -122,7 +122,7 @@ class Secure
      */
     private function internalGenerator($timestamp, $data)
     {
-        return password_hash($this->internalHash($timestamp, $data), PASSWORD_BCRYPT);
+        return password_hash($this->internalHash($timestamp, $data), PASSWORD_BCRYPT, [ "cost" => 4 ]);
     }
 
     /**
