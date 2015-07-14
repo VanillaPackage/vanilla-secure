@@ -13,7 +13,7 @@ class SecureTest extends PHPUnit_Framework_TestCase
      * @covers Rentalhost\VanillaSecure\Secure::generateFromTimestamp
      * @covers Rentalhost\VanillaSecure\Secure::validate
      * @covers Rentalhost\VanillaSecure\Secure::internalGenerator
-     * @covers Rentalhost\VanillaSecure\Secure::internalSerialize
+     * @covers Rentalhost\VanillaSecure\Secure::internalHash
      */
     public function testSuccess()
     {
@@ -27,6 +27,27 @@ class SecureTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf(Result::class, $validationResult);
         $this->assertTrue($validationResult->isSuccess());
         $this->assertSame("success", $validationResult->getMessage());
+    }
+
+    /**
+     * Test with additional data.
+     */
+    public function testAdditionalData()
+    {
+        $secure = new Secure("aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd");
+
+        $publicKeyTimestamp = time();
+        $publicKey = $secure->generateFromTimestamp($publicKeyTimestamp, [ "userId" => 1 ]);
+
+        $validationResult = $secure->validate($publicKey, $publicKeyTimestamp, [ "userId" => 1 ]);
+
+        $this->assertTrue($validationResult->isSuccess());
+        $this->assertSame("success", $validationResult->getMessage());
+
+        $validationResult = $secure->validate($publicKey, $publicKeyTimestamp, [ "userId" => 2 ]);
+
+        $this->assertFalse($validationResult->isSuccess());
+        $this->assertSame("fail:key.invalid", $validationResult->getMessage());
     }
 
     /**

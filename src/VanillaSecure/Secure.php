@@ -14,7 +14,7 @@ class Secure
 
     /**
      * Construct a new Secure instance.
-     * @param string  $privateKey      Private key.
+     * @param string $privateKey Private key.
      */
     public function __construct($privateKey)
     {
@@ -52,7 +52,7 @@ class Secure
     /**
      * Generate a new public key, by passing a own timestamp.
      * @param  integer $timestamp Key timestamp.
-     * @param  mixed   $data Additional key data.
+     * @param  mixed   $data      Additional key data.
      * @return Key
      */
     public function generateFromTimestamp($timestamp, $data = null)
@@ -75,7 +75,7 @@ class Secure
         }
 
         // Expected key is invalid.
-        if (!password_verify($this->internalSerialize($timestamp, $data), $key)) {
+        if (!password_verify($this->internalHash($timestamp, $data), $key)) {
             return new Result(false, "fail:key.invalid");
         }
 
@@ -90,17 +90,17 @@ class Secure
      */
     private function internalGenerator($timestamp, $data)
     {
-        return password_hash($this->internalSerialize($timestamp, $data), PASSWORD_BCRYPT);
+        return password_hash($this->internalHash($timestamp, $data), PASSWORD_BCRYPT);
     }
 
     /**
-     * Serializes data.
+     * Hash data using raw SHA512.
      * @param  integer $timestamp Key timestamp.
      * @param  mixed   $data      Key data.
      * @return string
      */
-    private function internalSerialize($timestamp, $data)
+    private function internalHash($timestamp, $data)
     {
-        return serialize([ $this->privateKey, $timestamp, $data ]);
+        return hash("SHA512", serialize([ $this->privateKey, $timestamp, $data ]), true);
     }
 }
