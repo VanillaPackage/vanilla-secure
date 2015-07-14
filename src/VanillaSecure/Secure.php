@@ -72,7 +72,7 @@ class Secure
      */
     public function generate($data = null)
     {
-        return $this->generateFromTimestamp(time(), $data);
+        return $this->generateFromTimestamp(gmmktime(), $data);
     }
 
     /**
@@ -101,7 +101,7 @@ class Secure
         }
 
         // Timestamp was delayed.
-        $timestampDelay = $timestamp - time();
+        $timestampDelay = $timestamp - gmmktime();
         if (abs($timestampDelay) > $this->delay) {
             return new Result(false, "fail:timestamp.delayed", [ "delay" => $timestampDelay ]);
         }
