@@ -23,7 +23,7 @@ class Secure
      * @param string  $privateKey Private key.
      * @param integer $delay      Limit delay to timestamp (up or down) in seconds.
      */
-    public function __construct($privateKey, $delay = 3600)
+    public function __construct($privateKey, $delay = 30)
     {
         $this->privateKey = $privateKey;
         $this->delay = $delay;

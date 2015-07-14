@@ -89,6 +89,7 @@ class SecureTest extends PHPUnit_Framework_TestCase
 
     /**
      * Test delay.
+     * @covers Rentalhost\VanillaSecure\Secure::validate
      * @covers Rentalhost\VanillaSecure\Secure::setDelay
      * @covers Rentalhost\VanillaSecure\Secure::getDelay
      */
