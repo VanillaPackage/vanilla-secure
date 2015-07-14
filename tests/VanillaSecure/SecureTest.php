@@ -86,4 +86,53 @@ class SecureTest extends PHPUnit_Framework_TestCase
         $secure->setPrivateKey("ddddddddddccccccccccbbbbbbbbbbaaaaaaaaaa");
         $this->assertSame("ddddddddddccccccccccbbbbbbbbbbaaaaaaaaaa", $secure->getPrivateKey());
     }
+
+    /**
+     * Test delay.
+     * @covers Rentalhost\VanillaSecure\Secure::setDelay
+     * @covers Rentalhost\VanillaSecure\Secure::getDelay
+     */
+    public function testDelay()
+    {
+        $secure = new Secure("aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd", 5);
+
+        $this->assertSame(5, $secure->getDelay());
+
+        $publicKeyTimestamp = time();
+        $publicKeyTimestampDelayedDown = $publicKeyTimestamp - 10;
+        $publicKeyTimestampDelayedUp = $publicKeyTimestamp + 10;
+
+        // Delayed down.
+        $publicKey = $secure->generateFromTimestamp($publicKeyTimestampDelayedDown);
+        $validationResult = $secure->validate($publicKey, $publicKeyTimestampDelayedDown);
+
+        $this->assertFalse($validationResult->isSuccess());
+        $this->assertSame("fail:timestamp.delayed", $validationResult->getMessage());
+        $this->assertSame([ "delay" => -10 ], $validationResult->getData());
+
+        // Delayed up.
+        $publicKey = $secure->generateFromTimestamp($publicKeyTimestampDelayedUp);
+        $validationResult = $secure->validate($publicKey, $publicKeyTimestampDelayedUp);
+
+        $this->assertFalse($validationResult->isSuccess());
+        $this->assertSame("fail:timestamp.delayed", $validationResult->getMessage());
+        $this->assertSame([ "delay" => 10 ], $validationResult->getData());
+
+        // Acceptable delay.
+        $secure->setDelay(15);
+
+        // Delayed down.
+        $publicKey = $secure->generateFromTimestamp($publicKeyTimestampDelayedDown);
+        $validationResult = $secure->validate($publicKey, $publicKeyTimestampDelayedDown);
+
+        $this->assertTrue($validationResult->isSuccess());
+        $this->assertSame("success", $validationResult->getMessage());
+
+        // Delayed up.
+        $publicKey = $secure->generateFromTimestamp($publicKeyTimestampDelayedUp);
+        $validationResult = $secure->validate($publicKey, $publicKeyTimestampDelayedUp);
+
+        $this->assertTrue($validationResult->isSuccess());
+        $this->assertSame("success", $validationResult->getMessage());
+    }
 }

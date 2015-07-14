@@ -13,12 +13,20 @@ class Secure
     private $privateKey;
 
     /**
-     * Construct a new Secure instance.
-     * @param string $privateKey Private key.
+     * Stores the limit delay of timestamp.
+     * @var integer
      */
-    public function __construct($privateKey)
+    private $delay;
+
+    /**
+     * Construct a new Secure instance.
+     * @param string  $privateKey Private key.
+     * @param integer $delay      Limit delay to timestamp (up or down) in seconds.
+     */
+    public function __construct($privateKey, $delay = 3600)
     {
         $this->privateKey = $privateKey;
+        $this->delay = $delay;
     }
 
     /**
@@ -37,6 +45,24 @@ class Secure
     public function getPrivateKey()
     {
         return $this->privateKey;
+    }
+
+    /**
+     * Redefine delay.
+     * @param integer $delay Delay.
+     */
+    public function setDelay($delay)
+    {
+        $this->delay = $delay;
+    }
+
+    /**
+     * Get current delay.
+     * @return integer
+     */
+    public function getDelay()
+    {
+        return $this->delay;
     }
 
     /**
@@ -72,6 +98,12 @@ class Secure
         // Timestamp is bad-formatted.
         if (!ctype_digit($timestamp) && !is_int($timestamp)) {
             return new Result(false, "fail:timestamp.invalid");
+        }
+
+        // Timestamp was delayed.
+        $timestampDelay = $timestamp - time();
+        if (abs($timestampDelay) > $this->delay) {
+            return new Result(false, "fail:timestamp.delayed", [ "delay" => $timestampDelay ]);
         }
 
         // Expected key is invalid.

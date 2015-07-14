@@ -8,11 +8,11 @@
     "packages": [
         {
             "name": "rentalhost/vanilla-result",
-            "version": "1.0.0",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://www.bitbucket.org/rentalhost/vanilla-result.git",
-                "reference": "b95e1f736429bfe85ee038d4a4ba997c705227c7"
+                "reference": "af924e11b87646ef5ee9eb98cf9a9bc0dcf4dd85"
             },
             "require-dev": {
                 "phpunit/phpunit": "^4.7"
@@ -34,7 +34,7 @@
                 }
             ],
             "description": "The vanilla-result will help you to create a result controller instance.",
-            "time": "2015-07-13 14:14:51"
+            "time": "2015-07-14 04:31:19"
         }
     ],
     "packages-dev": [
@@ -941,16 +941,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.7.1",
+            "version": "v2.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Yaml.git",
-                "reference": "9808e75c609a14f6db02f70fccf4ca4aab53c160"
+                "reference": "4bfbe0ed3909bfddd75b70c094391ec1f142f860"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Yaml/zipball/9808e75c609a14f6db02f70fccf4ca4aab53c160",
-                "reference": "9808e75c609a14f6db02f70fccf4ca4aab53c160",
+                "url": "https://api.github.com/repos/symfony/Yaml/zipball/4bfbe0ed3909bfddd75b70c094391ec1f142f860",
+                "reference": "4bfbe0ed3909bfddd75b70c094391ec1f142f860",
                 "shasum": ""
             },
             "require": {
@@ -986,7 +986,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2015-06-10 15:30:22"
+            "time": "2015-07-01 11:25:50"
         }
     ],
     "aliases": [],
