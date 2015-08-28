@@ -5,6 +5,10 @@ namespace Rentalhost\VanillaSecure;
 use Rentalhost\VanillaResult\Result;
 use PHPUnit_Framework_TestCase;
 
+/**
+ * Class SecureTest
+ * @package Rentalhost\VanillaSecure
+ */
 class SecureTest extends PHPUnit_Framework_TestCase
 {
     /**
@@ -17,16 +21,16 @@ class SecureTest extends PHPUnit_Framework_TestCase
      */
     public function testSuccess()
     {
-        $secure = new Secure("aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd");
+        $secure = new Secure('aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd');
 
         $publicKeyTimestamp = gmmktime();
         $publicKey = $secure->generateFromTimestamp($publicKeyTimestamp);
 
         $validationResult = $secure->validate($publicKey, $publicKeyTimestamp);
 
-        $this->assertInstanceOf(Result::class, $validationResult);
-        $this->assertTrue($validationResult->isSuccess());
-        $this->assertSame("success", $validationResult->getMessage());
+        static::assertInstanceOf(Result::class, $validationResult);
+        static::assertTrue($validationResult->isSuccess());
+        static::assertSame('success', $validationResult->getMessage());
     }
 
     /**
@@ -34,20 +38,20 @@ class SecureTest extends PHPUnit_Framework_TestCase
      */
     public function testAdditionalData()
     {
-        $secure = new Secure("aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd");
+        $secure = new Secure('aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd');
 
         $publicKeyTimestamp = gmmktime();
-        $publicKey = $secure->generateFromTimestamp($publicKeyTimestamp, [ "userId" => 1 ]);
+        $publicKey = $secure->generateFromTimestamp($publicKeyTimestamp, [ 'userId' => 1 ]);
 
-        $validationResult = $secure->validate($publicKey, $publicKeyTimestamp, [ "userId" => 1 ]);
+        $validationResult = $secure->validate($publicKey, $publicKeyTimestamp, [ 'userId' => 1 ]);
 
-        $this->assertTrue($validationResult->isSuccess());
-        $this->assertSame("success", $validationResult->getMessage());
+        static::assertTrue($validationResult->isSuccess());
+        static::assertSame('success', $validationResult->getMessage());
 
-        $validationResult = $secure->validate($publicKey, $publicKeyTimestamp, [ "userId" => 2 ]);
+        $validationResult = $secure->validate($publicKey, $publicKeyTimestamp, [ 'userId' => 2 ]);
 
-        $this->assertFalse($validationResult->isSuccess());
-        $this->assertSame("fail:key.invalid", $validationResult->getMessage());
+        static::assertFalse($validationResult->isSuccess());
+        static::assertSame('fail:key.invalid', $validationResult->getMessage());
     }
 
     /**
@@ -57,20 +61,20 @@ class SecureTest extends PHPUnit_Framework_TestCase
      */
     public function testFails()
     {
-        $secure = new Secure("aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd");
+        $secure = new Secure('aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd');
 
         // Timestamp invalid.
         $publicKey = $secure->generate();
-        $validationResult = $secure->validate($publicKey, "fail:timestamp.invalid");
+        $validationResult = $secure->validate($publicKey, 'fail:timestamp.invalid');
 
-        $this->assertFalse($validationResult->isSuccess());
-        $this->assertSame("fail:timestamp.invalid", $validationResult->getMessage());
+        static::assertFalse($validationResult->isSuccess());
+        static::assertSame('fail:timestamp.invalid', $validationResult->getMessage());
 
         // Timestamp invalid.
-        $validationResult = $secure->validate("invalid", gmmktime());
+        $validationResult = $secure->validate('invalid', gmmktime());
 
-        $this->assertFalse($validationResult->isSuccess());
-        $this->assertSame("fail:key.invalid", $validationResult->getMessage());
+        static::assertFalse($validationResult->isSuccess());
+        static::assertSame('fail:key.invalid', $validationResult->getMessage());
     }
 
     /**
@@ -80,11 +84,11 @@ class SecureTest extends PHPUnit_Framework_TestCase
      */
     public function testPrivateKey()
     {
-        $secure = new Secure("aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd");
-        $this->assertSame("aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd", $secure->getPrivateKey());
+        $secure = new Secure('aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd');
+        static::assertSame('aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd', $secure->getPrivateKey());
 
-        $secure->setPrivateKey("ddddddddddccccccccccbbbbbbbbbbaaaaaaaaaa");
-        $this->assertSame("ddddddddddccccccccccbbbbbbbbbbaaaaaaaaaa", $secure->getPrivateKey());
+        $secure->setPrivateKey('ddddddddddccccccccccbbbbbbbbbbaaaaaaaaaa');
+        static::assertSame('ddddddddddccccccccccbbbbbbbbbbaaaaaaaaaa', $secure->getPrivateKey());
     }
 
     /**
@@ -95,9 +99,9 @@ class SecureTest extends PHPUnit_Framework_TestCase
      */
     public function testDelay()
     {
-        $secure = new Secure("aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd", 5);
+        $secure = new Secure('aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd', 5);
 
-        $this->assertSame(5, $secure->getDelay());
+        static::assertSame(5, $secure->getDelay());
 
         $publicKeyTimestamp = gmmktime();
         $publicKeyTimestampDelayedDown = $publicKeyTimestamp - 10;
@@ -107,17 +111,17 @@ class SecureTest extends PHPUnit_Framework_TestCase
         $publicKey = $secure->generateFromTimestamp($publicKeyTimestampDelayedDown);
         $validationResult = $secure->validate($publicKey, $publicKeyTimestampDelayedDown);
 
-        $this->assertFalse($validationResult->isSuccess());
-        $this->assertSame("fail:timestamp.delayed", $validationResult->getMessage());
-        $this->assertSame([ "delay" => -10 ], $validationResult->getData());
+        static::assertFalse($validationResult->isSuccess());
+        static::assertSame('fail:timestamp.delayed', $validationResult->getMessage());
+        static::assertSame([ 'delay' => -10 ], $validationResult->getData());
 
         // Delayed up.
         $publicKey = $secure->generateFromTimestamp($publicKeyTimestampDelayedUp);
         $validationResult = $secure->validate($publicKey, $publicKeyTimestampDelayedUp);
 
-        $this->assertFalse($validationResult->isSuccess());
-        $this->assertSame("fail:timestamp.delayed", $validationResult->getMessage());
-        $this->assertSame([ "delay" => 10 ], $validationResult->getData());
+        static::assertFalse($validationResult->isSuccess());
+        static::assertSame('fail:timestamp.delayed', $validationResult->getMessage());
+        static::assertSame([ 'delay' => 10 ], $validationResult->getData());
 
         // Acceptable delay.
         $secure->setDelay(15);
@@ -126,14 +130,14 @@ class SecureTest extends PHPUnit_Framework_TestCase
         $publicKey = $secure->generateFromTimestamp($publicKeyTimestampDelayedDown);
         $validationResult = $secure->validate($publicKey, $publicKeyTimestampDelayedDown);
 
-        $this->assertTrue($validationResult->isSuccess());
-        $this->assertSame("success", $validationResult->getMessage());
+        static::assertTrue($validationResult->isSuccess());
+        static::assertSame('success', $validationResult->getMessage());
 
         // Delayed up.
         $publicKey = $secure->generateFromTimestamp($publicKeyTimestampDelayedUp);
         $validationResult = $secure->validate($publicKey, $publicKeyTimestampDelayedUp);
 
-        $this->assertTrue($validationResult->isSuccess());
-        $this->assertSame("success", $validationResult->getMessage());
+        static::assertTrue($validationResult->isSuccess());
+        static::assertSame('success', $validationResult->getMessage());
     }
 }
