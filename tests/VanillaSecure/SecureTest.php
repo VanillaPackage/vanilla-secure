@@ -23,7 +23,7 @@ class SecureTest extends PHPUnit_Framework_TestCase
     {
         $secure = new Secure('aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd');
 
-        $publicKeyTimestamp = time();
+        $publicKeyTimestamp = gmdate('Z');
         $publicKey = $secure->generateFromTimestamp($publicKeyTimestamp);
 
         $validationResult = $secure->validate($publicKey, $publicKeyTimestamp);
@@ -40,7 +40,7 @@ class SecureTest extends PHPUnit_Framework_TestCase
     {
         $secure = new Secure('aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd');
 
-        $publicKeyTimestamp = time();
+        $publicKeyTimestamp = gmdate('Z');
         $publicKey = $secure->generateFromTimestamp($publicKeyTimestamp, [ 'userId' => 1 ]);
 
         $validationResult = $secure->validate($publicKey, $publicKeyTimestamp, [ 'userId' => 1 ]);
@@ -71,7 +71,7 @@ class SecureTest extends PHPUnit_Framework_TestCase
         static::assertSame('fail:timestamp.invalid', $validationResult->getMessage());
 
         // Timestamp invalid.
-        $validationResult = $secure->validate('invalid', time());
+        $validationResult = $secure->validate('invalid', gmdate('Z'));
 
         static::assertFalse($validationResult->isSuccess());
         static::assertSame('fail:key.invalid', $validationResult->getMessage());
@@ -103,7 +103,7 @@ class SecureTest extends PHPUnit_Framework_TestCase
 
         static::assertSame(5, $secure->getDelay());
 
-        $publicKeyTimestamp = time();
+        $publicKeyTimestamp = gmdate('Z');
         $publicKeyTimestampDelayedDown = $publicKeyTimestamp - 10;
         $publicKeyTimestampDelayedUp = $publicKeyTimestamp + 10;
 
