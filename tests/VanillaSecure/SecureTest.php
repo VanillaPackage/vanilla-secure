@@ -2,8 +2,8 @@
 
 namespace Rentalhost\VanillaSecure;
 
-use Rentalhost\VanillaResult\Result;
 use PHPUnit_Framework_TestCase;
+use Rentalhost\VanillaResult\Result;
 
 /**
  * Class SecureTest
@@ -23,7 +23,7 @@ class SecureTest extends PHPUnit_Framework_TestCase
     {
         $secure = new Secure('aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd');
 
-        $publicKeyTimestamp = gmmktime();
+        $publicKeyTimestamp = time();
         $publicKey = $secure->generateFromTimestamp($publicKeyTimestamp);
 
         $validationResult = $secure->validate($publicKey, $publicKeyTimestamp);
@@ -40,7 +40,7 @@ class SecureTest extends PHPUnit_Framework_TestCase
     {
         $secure = new Secure('aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd');
 
-        $publicKeyTimestamp = gmmktime();
+        $publicKeyTimestamp = time();
         $publicKey = $secure->generateFromTimestamp($publicKeyTimestamp, [ 'userId' => 1 ]);
 
         $validationResult = $secure->validate($publicKey, $publicKeyTimestamp, [ 'userId' => 1 ]);
@@ -71,7 +71,7 @@ class SecureTest extends PHPUnit_Framework_TestCase
         static::assertSame('fail:timestamp.invalid', $validationResult->getMessage());
 
         // Timestamp invalid.
-        $validationResult = $secure->validate('invalid', gmmktime());
+        $validationResult = $secure->validate('invalid', time());
 
         static::assertFalse($validationResult->isSuccess());
         static::assertSame('fail:key.invalid', $validationResult->getMessage());
@@ -103,7 +103,7 @@ class SecureTest extends PHPUnit_Framework_TestCase
 
         static::assertSame(5, $secure->getDelay());
 
-        $publicKeyTimestamp = gmmktime();
+        $publicKeyTimestamp = time();
         $publicKeyTimestampDelayedDown = $publicKeyTimestamp - 10;
         $publicKeyTimestampDelayedUp = $publicKeyTimestamp + 10;
 
