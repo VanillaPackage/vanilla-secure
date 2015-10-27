@@ -116,9 +116,11 @@ class Secure
         }
 
         // Timestamp was delayed.
-        $timestampDelay = $timestamp - gmdate('U');
-        if (abs($timestampDelay) > $this->delay) {
-            return new Result(false, 'fail:timestamp.delayed', [ 'delay' => $timestampDelay ]);
+        if ($this->delay !== null) {
+            $timestampDelay = $timestamp - gmdate('U');
+            if (abs($timestampDelay) > $this->delay) {
+                return new Result(false, 'fail:timestamp.delayed', [ 'delay' => $timestampDelay ]);
+            }
         }
 
         // Expected key is invalid.

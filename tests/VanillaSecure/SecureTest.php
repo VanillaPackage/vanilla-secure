@@ -103,7 +103,7 @@ class SecureTest extends PHPUnit_Framework_TestCase
 
         static::assertSame(5, $secure->getDelay());
 
-        $publicKeyTimestamp = gmdate('U');
+        $publicKeyTimestamp = (int) gmdate('U');
         $publicKeyTimestampDelayedDown = $publicKeyTimestamp - 10;
         $publicKeyTimestampDelayedUp = $publicKeyTimestamp + 10;
 
@@ -125,6 +125,23 @@ class SecureTest extends PHPUnit_Framework_TestCase
 
         // Acceptable delay.
         $secure->setDelay(15);
+
+        // Delayed down.
+        $publicKey = $secure->generateFromTimestamp($publicKeyTimestampDelayedDown);
+        $validationResult = $secure->validate($publicKey, $publicKeyTimestampDelayedDown);
+
+        static::assertTrue($validationResult->isSuccess());
+        static::assertSame('success', $validationResult->getMessage());
+
+        // Delayed up.
+        $publicKey = $secure->generateFromTimestamp($publicKeyTimestampDelayedUp);
+        $validationResult = $secure->validate($publicKey, $publicKeyTimestampDelayedUp);
+
+        static::assertTrue($validationResult->isSuccess());
+        static::assertSame('success', $validationResult->getMessage());
+
+        // Unlimited delay.
+        $secure->setDelay(null);
 
         // Delayed down.
         $publicKey = $secure->generateFromTimestamp($publicKeyTimestampDelayedDown);
