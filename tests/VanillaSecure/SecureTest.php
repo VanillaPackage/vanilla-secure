@@ -157,4 +157,59 @@ class SecureTest extends PHPUnit_Framework_TestCase
         static::assertTrue($validationResult->isSuccess());
         static::assertSame('success', $validationResult->getMessage());
     }
+
+    /**
+     * Test string x integer private key.
+     * @covers Rentalhost\VanillaSecure\Secure::validate
+     */
+    public function testStringCrossIntegerPrivateKey()
+    {
+        $secure = new Secure(12345, null);
+
+        // Generate based on integer private key.
+        $publicKeyTimestamp = time();
+        $publicKey = $secure->generateFromTimestamp($publicKeyTimestamp);
+
+        // Test based on string private key.
+        $secure = new Secure('12345', null);
+        $validationResult = $secure->validate($publicKey, $publicKeyTimestamp);
+
+        static::assertTrue($validationResult->isSuccess());
+    }
+
+    /**
+     * Test string x integer timestamp.
+     * @covers Rentalhost\VanillaSecure\Secure::validate
+     */
+    public function testStringCrossIntegerTimestamp()
+    {
+        $secure = new Secure('aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd', null);
+
+        // Generate based on string time.
+        $publicKeyTimestamp = (string) time();
+        $publicKey = $secure->generateFromTimestamp($publicKeyTimestamp);
+
+        // Test based on integer time.
+        $validationResult = $secure->validate($publicKey, (int) $publicKeyTimestamp);
+
+        static::assertTrue($validationResult->isSuccess());
+    }
+
+    /**
+     * Test falsy vs empty data array.
+     * @covers Rentalhost\VanillaSecure\Secure::validate
+     */
+    public function testFalsyCrossEmptyDataArray()
+    {
+        $secure = new Secure('aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd', null);
+
+        // Generate based on falsy data.
+        $publicKeyTimestamp = time();
+        $publicKey = $secure->generateFromTimestamp($publicKeyTimestamp, null);
+
+        // Test based on empty data array.
+        $validationResult = $secure->validate($publicKey, $publicKeyTimestamp, [ ]);
+
+        static::assertTrue($validationResult->isSuccess());
+    }
 }

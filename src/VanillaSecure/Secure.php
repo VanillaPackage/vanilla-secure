@@ -154,6 +154,6 @@ class Secure
      */
     private function internalHash($timestamp, $data)
     {
-        return hash('SHA512', serialize([ $this->privateKey, $timestamp, $data ]), true);
+        return hash('SHA512', serialize([ (string) $this->privateKey, (int) $timestamp, (array) $data ]), true);
     }
 }
